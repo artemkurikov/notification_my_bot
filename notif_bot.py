@@ -4,9 +4,9 @@ from json import dump as js_dump, load as js_load, dumps as js_dumps
 from datetime import datetime, timedelta
 from time import mktime, sleep as tm_sleep
 from requests import post as req_post
-import os
+from os import environ as os_environ
 
-token = os.environ.get('TOKEN')
+token = os_environ.get('TOKEN')
 bot = telebot.TeleBot(token)
 
 @bot.message_handler(content_types=['text'])
