@@ -28,7 +28,6 @@ def return_notif_list():
 
 @app.route('/del_notif', methods=['PUT'])
 def delete_notif():
-#    print(len(request.text), file=sys.stdout)
     with open('notif.json', 'r') as file:
         file_js = js_load(file)
         file.close()
