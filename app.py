@@ -31,9 +31,8 @@ def delete_notif():
     with open('notif.json', 'r') as file:
         file_js = js_load(file)
         file.close()
-    file_js.remove(js_loads(request.json()))
-
+    file_js.remove(request.json)
     with open('notif.json', 'w') as file:
         js_dump(file_js, file, indent=1,ensure_ascii=False)
         file.close()
-    return '',200
+    return 'delete notification successfully', 200
