@@ -1,4 +1,5 @@
 import telebot
+from telebot import types
 from re import search as re_search
 from json import dump as js_dump, load as js_load, dumps as js_dumps
 from datetime import datetime, timedelta
@@ -11,8 +12,18 @@ bot = telebot.TeleBot(token)
 
 @bot.message_handler(commands=['reg'])
 def reg(message):
-    msg = bot.send_message(message.from_user.id, "input: your gmt \nexamaple: gmt +3")
-    bot.register_next_step_handler(msg, get_gmt)
+    req_check_user = req_get(f'http://localhost:5000/user/{message.from_user.id}')
+    if not 0 in req_check_user.json():
+#        bot.send_message(message.from_user.id, "Edit parametr GMT ?")
+        keyboard = types.InlineKeyboardMarkup()
+        key_yes = types.InlineKeyboardButton(text='Да', callback_data='yes')
+        keyboard.add(key_yes)
+        key_no= types.InlineKeyboardButton(text='Нет', callback_data='no')
+        keyboard.add(key_no)
+        bot.send_message(message.from_user.id, text='Edit parametr GMT ?', reply_markup=keyboard)
+    else:
+        msg = bot.send_message(message.from_user.id, "input: your gmt \nexamaple: gmt +3")
+        bot.register_next_step_handler(msg, get_gmt)
 
 @bot.message_handler(content_types=['text'])
 def text_messages(message):
@@ -43,6 +54,14 @@ def text_messages(message):
 #        bot.register_next_step_handler(message, get_gmt)
     else:
         bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.")
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_worker(call):
+    if call.data == "yes":
+        msg = bot.send_message(call.message.chat.id, "input: your gmt \nexamaple: gmt +3")
+        bot.register_next_step_handler(msg, get_gmt)
+    if call.data == "no":
+        bot.send_message(call.message.chat.id, "Ok!")
 
 def get_gmt(message):
     if re_search(r'gmt (\+|\-)(\s|)\d.*', message.text):

@@ -37,7 +37,7 @@ def delete_notif():
         file.close()
     return 'delete notification successfully', 200
 
-@app.route('/user/<user_id>', methods=['GET'])
+@app.route('/user/<int:user_id>', methods=['GET'])
 def return_user_id(user_id):
     with open('user_list', 'r') as file:
         file_js = js_load(file)
@@ -54,6 +54,6 @@ def user_regist():
         file.close()
     file_js.append(request.json)
     with open('user_list', 'w') as  file:
-        js_dump(file_js, file, indent=1,ensure_ascii=False)
+        js_dump(file_js, file)
         file.close()
     return '',200
