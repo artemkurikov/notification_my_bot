@@ -25,11 +25,11 @@ while True:
         time_sleep(10)
         continue
 
-    for obj in req_in_db.json():
-        if obj['time'] == time_now:
-            bot.send_message(obj['id_user'], obj['text'])
+    for lists in req_in_db.json():
+        if lists.count(time_now):
+            bot.send_message(lists[1], lists[2])
             try: 
-                req_del_notif = req_put('http://192.168.3.38:5000/del_notif', headers={'Content-Type': 'application/json'}, data=js_dumps(obj), timeout=3)
+                req_del_notif = req_put('http://192.168.3.38:5000/del_notif', headers={'Content-Type': 'application/json'}, data=js_dumps(lists), timeout=3)
             except req_exceptions.RequestException:
                 print('connection timeout: api/del_notif')
             print(req_del_notif.status_code)
