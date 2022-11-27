@@ -52,6 +52,9 @@ def user_regist():
     with open('user_list', 'r') as  file:
         file_js = js_load(file)
         file.close()
+    for user in file_js:
+        if user.count(request.json[0]):
+            file_js.remove(user)
     file_js.append(request.json)
     with open('user_list', 'w') as  file:
         js_dump(file_js, file)

@@ -10,12 +10,10 @@ bot = tebot_TeleBot(token)
 
 while True:
     try:
-        time_now = req_get('http://worldtimeapi.org/api/timezone/Europe/Moscow', timeout=3)
-    except req_exceptions.Timeout:
+        time_now = req_get('http://worldtimeapi.org/api/timezone/Europe/Moscow', timeout=5)
+    except req_exceptions.RequestException:
         print('connection timeout: http://worldtimeapi.org/api/timezone/Europe/Moscow')
-        time_sleep(10)
         continue
-
     time_now = datetime.strptime(time_now.json()['utc_datetime'], '%Y-%m-%dT%H:%M:%S.%f+00:00').replace(microsecond=0, second=0)
     time_now = int(time_mktime(time_now.timetuple()))
     try:
