@@ -10,12 +10,10 @@ bot = tebot_TeleBot(token)
 
 while True:
     try:
-        time_now = req_get('http://worldtimeapi.org/api/timezone/Europe/Moscow', timeout=3)
-    except req_exceptions.Timeout:
+        time_now = req_get('http://worldtimeapi.org/api/timezone/Europe/Moscow', timeout=5)
+    except req_exceptions.RequestException:
         print('connection timeout: http://worldtimeapi.org/api/timezone/Europe/Moscow')
-        time_sleep(10)
         continue
-
     time_now = datetime.strptime(time_now.json()['utc_datetime'], '%Y-%m-%dT%H:%M:%S.%f+00:00').replace(microsecond=0, second=0)
     time_now = int(time_mktime(time_now.timetuple()))
     try:
@@ -25,11 +23,11 @@ while True:
         time_sleep(10)
         continue
 
-    for obj in req_in_db.json():
-        if obj['time'] == time_now:
-            bot.send_message(obj['id_user'], obj['text'])
+    for lists in req_in_db.json():
+        if lists.count(time_now):
+            bot.send_message(lists[1], lists[2])
             try: 
-                req_del_notif = req_put('http://192.168.3.38:5000/del_notif', headers={'Content-Type': 'application/json'}, data=js_dumps(obj), timeout=3)
+                req_del_notif = req_put('http://192.168.3.38:5000/del_notif', headers={'Content-Type': 'application/json'}, data=js_dumps(lists), timeout=3)
             except req_exceptions.RequestException:
                 print('connection timeout: api/del_notif')
             print(req_del_notif.status_code)
